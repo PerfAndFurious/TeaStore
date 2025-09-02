@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
@@ -37,6 +39,8 @@ import tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations;
 import tools.descartes.teastore.registryclient.util.NotFoundException;
 import tools.descartes.teastore.registryclient.util.TimeoutException;
 
+import ctrlmnt.ControllableService;
+
 /**
  * Rest endpoint for the store user actions.
  * 
@@ -45,8 +49,9 @@ import tools.descartes.teastore.registryclient.util.TimeoutException;
 @Path("useractions")
 @Produces({ "application/json" })
 @Consumes({ "application/json" })
-public class AuthUserActionsRest {
+public class AuthUserActionsRest extends ControllableService {
 
+  private long stime = 5;
   /**
    * Persists order in database.
    * 
@@ -77,6 +82,9 @@ public class AuthUserActionsRest {
       @QueryParam("creditCardCompany") String creditCardCompany,
       @QueryParam("creditCardNumber") String creditCardNumber,
       @QueryParam("creditCardExpiryDate") String creditCardExpiryDate) {
+
+    this.doWork(stime);
+
     if (new ShaSecurityProvider().validate(blob) == null || blob.getOrderItems().isEmpty()) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
@@ -132,6 +140,9 @@ public class AuthUserActionsRest {
   @Path("login")
   public Response login(SessionBlob blob, @QueryParam("name") String name,
       @QueryParam("password") String password) {
+
+    this.doWork(stime);
+
     User user;
     try {
       user = LoadBalancedCRUDOperations.getEntityWithProperties(Service.PERSISTENCE, "users",
@@ -162,6 +173,9 @@ public class AuthUserActionsRest {
   @POST
   @Path("logout")
   public Response logout(SessionBlob blob) {
+
+    this.doWork(stime);
+
     blob.setUID(null);
     blob.setSID(null);
     blob.setOrder(new Order());
@@ -179,8 +193,18 @@ public class AuthUserActionsRest {
   @POST
   @Path("isloggedin")
   public Response isLoggedIn(SessionBlob blob) {
+
+    this.doWork(stime);
+
     return Response.status(Response.Status.OK).entity(new ShaSecurityProvider().validate(blob))
         .build();
+  }
+
+  @GET
+  @Path("/deploy")
+  public Response deploy(@PathParam("stime") long st) {
+    this.stime = st;
+    return Response.status(Response.Status.OK).build();
   }
 
 }

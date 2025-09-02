@@ -19,6 +19,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 
+import ctrlmnt.ControllableService;
+
 /**
  * Rest endpoint for the store cart.
  * 
@@ -26,8 +28,9 @@ import jakarta.ws.rs.core.Response;
  */
 @Path("ready")
 @Produces({ "application/json" })
-public class ReadyRest {
+public class ReadyRest extends ControllableService {
 
+  private long stime = 5;
 
   /**
    * This methods checks, if the service is ready.
@@ -37,6 +40,9 @@ public class ReadyRest {
   @GET
   @Path("isready")
   public Response isReady() {
+    
+    this.doWork(stime);
+
     return Response.ok(String.valueOf(true)).build();
   }
 

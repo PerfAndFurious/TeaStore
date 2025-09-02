@@ -40,6 +40,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>ctrlmnt</groupId>
+			<artifactId>ctrlmnt</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>junit</groupId>

@@ -23,6 +23,8 @@ import tools.descartes.teastore.recommender.servlet.TrainingSynchronizer;
 import tools.descartes.teastore.entities.Order;
 import tools.descartes.teastore.entities.OrderItem;
 
+import ctrlmnt.ControllableService;
+
 /**
  * REST endpoint to trigger the (re)training of the Recommender.
  *
@@ -31,7 +33,9 @@ import tools.descartes.teastore.entities.OrderItem;
  */
 @Path("train")
 @Produces({ "text/plain", "application/json" })
-public class TrainEndpoint {
+public class TrainEndpoint extends ControllableService {
+
+	private long stime = 5;
 
 	/**
 	 * Triggers the training of the recommendation algorithm. It retrieves all data
@@ -49,6 +53,9 @@ public class TrainEndpoint {
 	 */
 	@GET
 	public Response train() {
+
+		this.doWork(stime);
+
 		try {
 			long start = System.currentTimeMillis();
 			long number = TrainingSynchronizer.getInstance().retrieveDataAndRetrain();

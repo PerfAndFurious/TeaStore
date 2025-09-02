@@ -17,6 +17,7 @@ package tools.descartes.teastore.auth.rest;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -32,6 +33,9 @@ import tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations;
 import tools.descartes.teastore.registryclient.util.NotFoundException;
 import tools.descartes.teastore.registryclient.util.TimeoutException;
 
+
+import ctrlmnt.ControllableService;
+
 /**
  * Rest endpoint for the store cart.
  * 
@@ -40,7 +44,9 @@ import tools.descartes.teastore.registryclient.util.TimeoutException;
 @Path("cart")
 @Produces({ "application/json" })
 @Consumes({ "application/json" })
-public class AuthCartRest {
+public class AuthCartRest extends ControllableService {
+
+  private long stime = 5;
 
   /**
    * Adds product to cart. If the product is already in the cart the quantity is
@@ -55,6 +61,7 @@ public class AuthCartRest {
   @POST
   @Path("add/{pid}")
   public Response addProductToCart(SessionBlob blob, @PathParam("pid") final Long pid) {
+    this.doWork(stime);
     Product product;
     try {
       product = LoadBalancedCRUDOperations.getEntity(Service.PERSISTENCE, "products", Product.class,
@@ -131,6 +138,13 @@ public class AuthCartRest {
       }
     }
     return Response.status(Response.Status.NOT_FOUND).build();
+  }
+
+  @GET
+  @Path("/deploy")
+  public Response deploy(@PathParam("stime") long st) {
+    this.stime = st;
+    return Response.status(Response.Status.OK).build();
   }
 
 }

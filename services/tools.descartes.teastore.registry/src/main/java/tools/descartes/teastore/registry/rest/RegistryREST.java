@@ -24,13 +24,17 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
+import ctrlmnt.ControllableService;
+
 /**
  * Rest endpoint for the registry.
  * @author Simon
  */
 @Path("services")
 @Produces({ "application/json" })
-public class RegistryREST {
+public class RegistryREST extends ControllableService {
+
+	private long stime = 5;
 
 	/**
 	 * Register a service at a location.
@@ -41,6 +45,9 @@ public class RegistryREST {
 	@PUT
 	@Path("{name}/{location}")
 	public Response register(@PathParam("name") final String name, @PathParam("location") final String location) {
+
+		this.doWork(stime);
+
 		boolean success = Registry.getRegistryInstance().register(name, location);
 		if (success) {
 			return Response.status(Status.CREATED).build();
@@ -57,6 +64,9 @@ public class RegistryREST {
 	@DELETE
 	@Path("{name}/{location}")
 	public Response unregister(@PathParam("name") final String name, @PathParam("location") final String location) {
+
+		this.doWork(stime);
+
 		boolean success = Registry.getRegistryInstance().unregister(name, location);
 		if (success) {
 			return Response.status(Response.Status.OK).build();
@@ -72,6 +82,9 @@ public class RegistryREST {
 	@GET
 	@Path("{name}")
 	public Response getInstances(@PathParam("name") final String name) {
+
+		this.doWork(stime);
+
 		List<String> locations = Registry.getRegistryInstance().getLocations(name);
 		return Response.status(Response.Status.OK).entity(locations).build();
 	}
