@@ -29,15 +29,19 @@ import tools.descartes.teastore.persistence.repository.CacheManager;
 import tools.descartes.teastore.persistence.repository.DataGenerator;
 import tools.descartes.teastore.registryclient.RegistryClient;
 
+import ctrlmnt.ControllableService;
+
 /**
  * Persistence endpoint for generating new database content.
  * @author Joakim von Kistowski
  *
  */
 @Path("generatedb")
-public class DatabaseGenerationEndpoint {
+public class DatabaseGenerationEndpoint extends ControllableService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DatabaseGenerationEndpoint.class);
+
+	private long stime = 5;
 
 	/**
 	 * Drop database and create a new one.
@@ -54,6 +58,8 @@ public class DatabaseGenerationEndpoint {
 			@QueryParam("products") final Integer products,
 			@QueryParam("users") final Integer users,
 			@QueryParam("orders") final Integer orders) {
+		this.doWork(stime);
+
 		LOG.info("Received database generation command for Persistence at "
 			+ RegistryClient.getClient().getMyServiceInstanceServer() + ".");
 		if (DataGenerator.GENERATOR.isMaintenanceMode()) {
@@ -104,6 +110,8 @@ public class DatabaseGenerationEndpoint {
 	@GET
 	@Path("finished")
 	public Response isFinshed() {
+		this.doWork(stime);
+
 		if (DataGenerator.GENERATOR.getGenerationFinishedFlag()) {
 			return Response.ok(true).build();
 		} else {
@@ -120,6 +128,8 @@ public class DatabaseGenerationEndpoint {
 	@POST
 	@Path("maintenance")
 	public Response setMaintenanceMode(final Boolean maintenanceMode) {
+		this.doWork(stime);
+
 		if (maintenanceMode == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -134,6 +144,8 @@ public class DatabaseGenerationEndpoint {
 	@GET
 	@Path("maintenance")
 	public Response isMaintenance() {
+		this.doWork(stime);
+
 		return Response.ok(DataGenerator.GENERATOR.isMaintenanceMode()).build();
 	}
 }

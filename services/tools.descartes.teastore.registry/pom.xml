@@ -91,6 +91,13 @@
 			<version>9.0.0</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>ctrlmnt</groupId>
+			<artifactId>ctrlmnt</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>tools.descartes.teastore.registry</finalName>

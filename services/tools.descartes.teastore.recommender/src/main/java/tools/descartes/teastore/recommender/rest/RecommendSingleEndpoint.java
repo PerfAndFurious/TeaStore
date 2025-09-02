@@ -28,6 +28,8 @@ import tools.descartes.teastore.entities.OrderItem;
 import tools.descartes.teastore.entities.Product;
 import tools.descartes.teastore.entities.User;
 
+import ctrlmnt.ControllableService;
+
 /**
  * Recommender REST endpoint for single recommendation.
  * 
@@ -37,7 +39,9 @@ import tools.descartes.teastore.entities.User;
 @Path("recommendsingle")
 @Produces({ "application/json" })
 @Consumes({ "application/json" })
-public class RecommendSingleEndpoint {
+public class RecommendSingleEndpoint extends ControllableService {
+
+	private long stime = 5;
 
 	/**
 	 * Return a list of all {@link Product}s, that are recommended for the given
@@ -56,6 +60,9 @@ public class RecommendSingleEndpoint {
 	 */
 	@POST
 	public Response recommend(OrderItem item, @QueryParam("uid") final Long uid) {
+		
+		this.doWork(stime);
+
 		if (item == null) {
 			throw new NullPointerException("OrderItem must not be null.");
 		}

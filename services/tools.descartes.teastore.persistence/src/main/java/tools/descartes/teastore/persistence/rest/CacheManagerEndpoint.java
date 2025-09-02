@@ -21,13 +21,17 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import tools.descartes.teastore.persistence.repository.CacheManager;
 
+import ctrlmnt.ControllableService;
+
 /**
  * REST endpoint for cache clearing.
  * @author Joakim von Kistowski
  */
 @Path("cache")
 @Produces("text/plain")
-public final class CacheManagerEndpoint {
+public final class CacheManagerEndpoint extends ControllableService {
+
+	private long stime = 5;
 
 	/**
 	 * Clears the cache for the class.
@@ -37,6 +41,8 @@ public final class CacheManagerEndpoint {
 	@DELETE
 	@Path("/class/{class}")
 	public Response clearClassCache(@PathParam("class") final String className) {
+		this.doWork(stime);
+
 		boolean classfound = true;
 		try {
 			Class<?> entityClass = Class.forName(className);
@@ -57,6 +63,8 @@ public final class CacheManagerEndpoint {
 	@DELETE
 	@Path("/cache")
 	public Response clearAllCaches() {
+		this.doWork(stime);
+
 		CacheManager.MANAGER.clearLocalCacheOnly();
 		return Response.ok("cleared").build();
 	}
@@ -68,6 +76,8 @@ public final class CacheManagerEndpoint {
 	@DELETE
 	@Path("/emf")
 	public Response clearEMF() {
+		this.doWork(stime);
+
 		CacheManager.MANAGER.resetLocalEMF();
 		return Response.ok("clearedEMF").build();
 	}

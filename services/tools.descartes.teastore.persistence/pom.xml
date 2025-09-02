@@ -56,6 +56,12 @@
 			<version>0.4</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>ctrlmnt</groupId>
+			<artifactId>ctrlmnt</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
