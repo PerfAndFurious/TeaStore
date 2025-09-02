@@ -1,0 +1,12 @@
+FROM maven:3.9.6-eclipse-temurin-11 AS build
+WORKDIR /app
+COPY . /app
+RUN mvn -q -DskipTests -pl services/tools.descartes.teastore.webui -am clean package
+
+FROM descartesresearch/teastore-base:latest
+LABEL maintainer="Chair of Software Engineering <se2-it@informatik.uni-wuerzburg.de>"
+COPY --from=build /app/services/tools.descartes.teastore.webui/target/*.war /usr/local/tomcat/webapps/
+RUN mkdir -p /usr/local/tomcat/webapps/ROOT
+
+CMD java -jar /usr/local/tomcat/bin/dockermemoryconfigurator.jar ${TOMCAT_HEAP_MEM_PERCENTAGE}; /usr/local/tomcat/bin/start.sh && echo '<% response.sendRedirect("/tools.descartes.teastore.webui/"); %>' > /usr/local/tomcat/webapps/ROOT/index.jsp && /usr/local/tomcat/bin/catalina.sh run
+

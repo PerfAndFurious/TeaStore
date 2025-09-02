@@ -1,0 +1,9 @@
+FROM maven:3.9.6-eclipse-temurin-11 AS build
+WORKDIR /app
+COPY . /app
+RUN mvn -q -DskipTests -pl services/tools.descartes.teastore.persistence -am clean package
+
+FROM descartesresearch/teastore-base:latest
+MAINTAINER Chair of Software Engineering <se2-it@informatik.uni-wuerzburg.de>
+COPY --from=build /app/services/tools.descartes.teastore.persistence/target/*.war /usr/local/tomcat/webapps/
+

@@ -1,0 +1,73 @@
+version: '3'
+services:
+  registry:
+    image: descartesresearch/teastore-registry
+    build:
+      context: ../..
+      dockerfile: services/tools.descartes.teastore.registry/Dockerfile.localbuild
+    expose:
+      - "8080"
+  db:
+    image: descartesresearch/teastore-db
+    build:
+      context: ../../utilities/tools.descartes.teastore.database
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+  persistence:
+    image: descartesresearch/teastore-persistence
+    build:
+      context: ../..
+      dockerfile: services/tools.descartes.teastore.persistence/Dockerfile.localbuild
+    expose:
+      - "8080"
+    environment:
+      HOST_NAME: "persistence"
+      REGISTRY_HOST: "registry"
+      DB_HOST: "db"
+      DB_PORT: "3306"
+  auth:
+    image: descartesresearch/teastore-auth
+    build:
+      context: ../..
+      dockerfile: services/tools.descartes.teastore.auth/Dockerfile.localbuild
+    expose:
+      - "8080"
+    environment:
+      HOST_NAME: "auth"
+      REGISTRY_HOST: "registry"
+  image:
+    image: descartesresearch/teastore-image
+    build:
+      context: ../..
+      dockerfile: services/tools.descartes.teastore.image/Dockerfile.localbuild
+    expose:
+      - "8080"
+    environment:
+      HOST_NAME: "image"
+      REGISTRY_HOST: "registry"
+  recommender:
+    image: descartesresearch/teastore-recommender
+    build:
+      context: ../..
+      dockerfile: services/tools.descartes.teastore.recommender/Dockerfile.localbuild
+    expose:
+      - "8080"
+    environment:
+      HOST_NAME: "recommender"
+      REGISTRY_HOST: "registry"
+  webui:
+    image: descartesresearch/teastore-webui
+    build:
+      context: ../..
+      dockerfile: services/tools.descartes.teastore.webui/Dockerfile.localbuild
+    expose:
+      - "8080"
+    environment:
+      HOST_NAME: "webui"
+      REGISTRY_HOST: "registry"
+    ports:
+      - "8080:8080"
+
+
