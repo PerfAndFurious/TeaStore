@@ -1,6 +1,7 @@
 FROM maven:3.9.6-eclipse-temurin-11 AS build
 WORKDIR /app
 COPY . /app
+RUN mvn -q -DskipTests -f deploy-ctrlmnt/pom.xml clean install
 RUN mvn -q -DskipTests -pl services/tools.descartes.teastore.auth -am clean package
 
 FROM descartesresearch/teastore-base:latest
